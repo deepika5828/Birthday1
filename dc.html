@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday 🎂🎉</title>
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background-size: cover;
+      background-position: center;
+      overflow: hidden;
+      font-family: 'Poppins', sans-serif;
+      color: rgb(39, 38, 38);
+      text-align: center;
+      padding-top: 60px;
+      position: relative;
+      transition: background 1.5s ease-in-out;
+    }
+
+    h1 {
+      font-size: 3.5em;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+    }
+
+    h2 {
+      font-size: 2em;
+      margin: 15px 0;
+      min-height: 2.5em;
+      text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+    }
+
+    .cake {
+      width: 300px;
+      margin-top: 40px;
+      animation: float 3s ease-in-out infinite;
+      position: relative;
+      z-index: 2;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Balloon styles */
+    .balloon {
+      position: absolute;
+      width: 50px;
+      height: 70px;
+      border-radius: 50% 50% 50% 50%;
+      bottom: -100px;
+      animation: rise 10s linear infinite, sway 3s ease-in-out infinite alternate;
+      z-index: 1;
+    }
+
+    @keyframes rise {
+      0% { bottom: -100px; }
+      100% { bottom: 100vh; }
+    }
+
+    @keyframes sway {
+      0% { transform: translateX(0); }
+      50% { transform: translateX(20px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Firework canvas */
+    #fireworks {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Link styles */
+    .link-button {
+      margin-top: 30px;
+      padding: 12px 25px;
+      background-color: #ff69b4;
+      color: white;
+      font-size: 1.2em;
+      text-decoration: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      transition: 0.3s;
+      z-index: 2;
+      position: relative;
+    }
+
+    .link-button:hover {
+      background-color: #ff85c1;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 Happy Birthday PM! 🎂</h1>
+  <h2 id="line1"></h2>
+  <h2 id="line2"></h2>
+
+  <img src="E:/sharmila/sha pic/htmltask/brithday card/anime girl.avif" alt="Birthday Cake" class="cake">
+
+  <!-- Clickable link/button -->
+  <a href="https://www.example.com" target="_blank" class="link-button">Visit My Profile</a>
+
+  <!-- Balloons -->
+  <div class="balloon" style="left: 10%; background: #ff4d6d;"></div>
+  <div class="balloon" style="left: 30%; background: #ffb347;"></div>
+  <div class="balloon" style="left: 50%; background: #6a5acd;"></div>
+  <div class="balloon" style="left: 70%; background: #00ced1;"></div>
+  <div class="balloon" style="left: 90%; background: #ff69b4;"></div>
+
+  <!-- Fireworks canvas -->
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    // Typing effect
+    function typeLine(el, text, delay, duration) {
+      setTimeout(() => {
+        let i = 0;
+        const interval = (duration * 1000) / text.length;
+        let typing = setInterval(() => {
+          el.textContent += text[i];
+          i++;
+          if (i >= text.length) clearInterval(typing);
+        }, interval);
+      }, delay);
+    }
+
+    const line1 = document.getElementById("line1");
+    const line2 = document.getElementById("line2");
+
+    typeLine(line1, "✨ Wishing you love, joy & endless happiness today and always 💖", 1000, 6);
+    typeLine(line2, "🌟 May all your dreams come true this year 🎁", 8000, 5);
+
+    // Background images array
+    const backgrounds = [
+      'https://images.unsplash.com/photo-1507620244370-3eadead8bcd7?auto=format&fit=crop&w=1470&q=80',
+      'https://images.unsplash.com/photo-1542365885-8f3f3dce9f18?auto=format&fit=crop&w=1470&q=80',
+      'https://images.unsplash.com/photo-1549887534-9b8b1b7d6f44?auto=format&fit=crop&w=1470&q=80',
+      'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?auto=format&fit=crop&w=1470&q=80'
+    ];
+
+    let bgIndex = 0;
+    setInterval(() => {
+      bgIndex = (bgIndex + 1) % backgrounds.length;
+      document.body.style.backgroundImage = `url(${backgrounds[bgIndex]})`;
+    }, 5000);
+
+    // Fireworks
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    class Firework {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = canvas.height;
+        this.targetY = Math.random() * canvas.height / 2;
+        this.color = `hsl(${Math.random()*360}, 100%, 50%)`;
+        this.particles = [];
+        this.done = false;
+      }
+      update() {
+        if (this.y > this.targetY) this.y -= 5;
+        else if(!this.done) {
+          for(let i=0; i<50; i++) this.particles.push(new Particle(this.x, this.y, this.color));
+          this.done = true;
+        }
+        this.particles.forEach(p => p.update());
+        this.particles = this.particles.filter(p => !p.done);
+      }
+      draw() { this.particles.forEach(p => p.draw()); }
+    }
+
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x; this.y = y; this.color = color;
+        this.vx = (Math.random()-0.5)*8;
+        this.vy = (Math.random()-0.5)*8;
+        this.alpha = 1; this.done = false;
+      }
+      update() { this.x+=this.vx; this.y+=this.vy; this.alpha-=0.02; if(this.alpha<=0) this.done=true; }
+      draw() { ctx.globalAlpha=this.alpha; ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,3,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; }
+    }
+
+    let fireworks = [];
+    function animate() {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      if(Math.random()<0.05) fireworks.push(new Firework());
+      fireworks.forEach(f=>{f.update(); f.draw();});
+      fireworks = fireworks.filter(f => f.particles.length>0);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
+  </script>
+</body>
+</html>
